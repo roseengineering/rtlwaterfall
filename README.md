@@ -1,22 +1,24 @@
 # rtlwaterfall
 
-At radio spectrum viewer that displays a FFT waterfall as ascii art.
-Useful for checking the performance of a remote rtltcp or soapytcp (see 
-github.com/roseengineering/soapytcp) server using ssh.
+A radio spectrum viewer that displays a FFT waterfall as ascii art.
+It communicates with a RTLTCP server over TCP to read the radio signal.  It
+can also use issue RTLTCP commands to control the radio.  For example 
+it can change the sampling rate or frequency of the networked radio.
 
-If no length is given for the FFT then it will use the number of
-columns of the terminal as the FFT length - if the terminal is
+The rtlwaterfall program is useful for checking the performance of 
+a remotely running rtltcp or soapytcp (see 
+github.com/roseengineering/soapytcp) using say ssh.
+
+If no length is given for the FFT then rtlwaterfall will use the number of
+columns in the terminal as the FFT length - if the terminal is
 resized the length will be adjusted accordingly.
 
-The floor option defaults to -50 dBFS as the noise floor for
-the waterfall.
-
-If the options freq, rate, gain, and auto are set then the changes
-are made over the TCP connection using the RTLTCP protocol.
+The floor option defaults to -50 dBFS as the noise floor of
+the waterfall.  0 dBFS is considered the max value.
 
 If the float option is set then the TCP stream will be read as
-32-bit complex floats.  32-bit IQ streams are used by GNU Radio.
-
+32-bit complex floats instead of unsigned bytes.  
+Complex 32-bit IQ streams are used by program such as GNU Radio.
 
 ```
 $ rtlwaterfall -h
