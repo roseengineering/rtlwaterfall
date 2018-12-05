@@ -39,7 +39,7 @@ class Client:
         else:
             self.N = self.length
         dsize = 8 if self.float else 2
-        self.fft = FFT(self.N)
+        self.fft = FFT(self.N, hann=self.hann)
         self.msglen = dsize * self.N
 
     def waterfall(self, db):
@@ -129,6 +129,8 @@ def main():
         help="FFT computations to skip")
     parser.add_argument("--float", action="store_true",
         help="read 32-bit float samples")
+    parser.add_argument("--hann", action="store_true",
+        help="use a hann window")
     parser.add_argument("--host", default="127.0.0.1",
         help="host address of server")
     parser.add_argument("--port", type=int, default=1234,

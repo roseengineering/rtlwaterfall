@@ -23,9 +23,9 @@ streams are used by program such as GNU Radio.
 ```
 $ rtlwaterfall -h
 usage: rtlwaterfall [-h] [--floor FLOOR] [--length LENGTH] [--repeat REPEAT]
-                    [--skip SKIP] [--float] [--host HOST] [--port PORT]
-                    [--freq FREQ] [--rate RATE] [--gain GAIN] [--auto]
-                    [--quit]
+                    [--skip SKIP] [--float] [--hann] [--host HOST]
+                    [--port PORT] [--freq FREQ] [--rate RATE] [--gain GAIN]
+                    [--auto] [--quit]
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -34,6 +34,7 @@ optional arguments:
   --repeat REPEAT  FFT computations to average
   --skip SKIP      FFT computations to skip
   --float          read 32-bit float samples
+  --hann           use a hann window
   --host HOST      host address of server
   --port PORT      port address of server
   --freq FREQ      set center frequency (Hz)
