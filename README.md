@@ -16,8 +16,8 @@ resized the length will be adjusted accordingly.
 The floor option defaults to -50 dBFS as the noise floor of
 the waterfall.  0 dBFS is considered the max value.
 If the float option is set then the TCP stream will be read as
-32-bit complex floats instead of unsigned bytes.  
-Complex 32-bit IQ streams are used by program such as GNU Radio.
+32-bit complex floats instead of unsigned bytes.  Complex 32-bit IQ 
+streams are used by program such as GNU Radio.
 
 ```
 $ rtlwaterfall -h
