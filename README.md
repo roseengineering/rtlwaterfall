@@ -43,7 +43,7 @@ optional arguments:
   --quit           quit, no waterfall
 ```
 
-For example, the following works well for a 2048 KHz RTLTCP stream if you stand back.
+For example, the following works well for a 2048KHz RTLTCP stream if you stand back.
 
 ```
 $ rtlwaterfall --repeat 2000 --freq 99e6 --gain 40
