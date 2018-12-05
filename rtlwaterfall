@@ -1,0 +1,152 @@
+#!/usr/bin/python3  
+
+import os, sys, argparse, socket, struct, signal
+import numpy as np
+
+
+class FFT:
+    def __init__(self, N, hann=False):
+        phi = np.linspace(0, 2 * np.pi, N)
+        x = np.cos(phi) + 1j * np.sin(phi)
+        self.window = self.hann(N) if hann else np.ones(N)
+        self.norm = self.run(x)[1]
+
+    def run(self, x):
+        y = np.fft.fft(x * self.window)
+        return np.real(y * np.conjugate(y))
+        
+    def power(self, x):
+        return self.run(x) / self.norm
+
+    def hann(self, N):
+        return np.array([
+            .5 - .5 * np.cos(2 * np.pi * n / (N - 1)) 
+            for n in range(N)])
+
+
+class Client:
+    gray_scale = '.\'`^",:;Il!i><~+_-?][}{1)(|\\/tfjrxnu' \
+                 'vczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$'
+
+    def __init__(self, **kw):
+        self.colors = len(self.gray_scale)
+        for key, value in kw.items():
+            setattr(self, key, value)
+
+    def initialize(self):
+        if self.length is None:
+            self.N = os.get_terminal_size().columns or 80
+        else:
+            self.N = self.length
+        dsize = 8 if self.float else 2
+        self.fft = FFT(self.N)
+        self.msglen = dsize * self.N
+
+    def waterfall(self, db):
+        db = db - self.floor
+        db = (db * self.colors / -self.floor).astype(int)
+        db = np.maximum(db, 0)
+        db = np.minimum(db, self.colors - 1)
+        db = np.fft.fftshift(db)
+        line = ''.join(map(lambda n: self.gray_scale[n], db))
+        print(line)
+
+    def loop(self, sock):
+        self.resize = False
+        self.initialize()
+        while not self.resize:
+            y = np.zeros(self.N) 
+            for i in range(self.repeat):
+                for k in range(self.skip + 1):
+                    x = self.block(sock)
+                y += self.fft.power(x - x.mean())
+            y = 10 * np.log10(y / self.repeat + 1e-100)
+            self.waterfall(y)
+
+    def read(self, sock):
+        chunks = []
+        bytes_recd = 0
+        while bytes_recd < self.msglen:
+            chunk = sock.recv(min(self.msglen - bytes_recd, 2048))
+            if chunk == b'':
+                raise RuntimeError("socket connection broken")
+            chunks.append(chunk)
+            bytes_recd = bytes_recd + len(chunk)
+        return b''.join(chunks)
+
+    def block(self, sock):
+        buf = self.read(sock)
+        if self.float:
+            data = np.frombuffer(buf, dtype='f')
+        else:
+            data = np.frombuffer(buf, dtype='B')
+            data = (data.astype(float) - 128) / 128
+        return data[0::2] + 1j * data[1::2]
+
+    def send(self, sock, command, param):
+        data = struct.pack(">BI", command, int(param))
+        sock.sendall(data)
+
+    def command(self, sock):
+        if self.freq is not None:
+            self.send(sock, 0x1, self.freq)
+        if self.rate is not None:
+            self.send(sock, 0x2, self.rate)
+        if self.gain is not None:
+            self.send(sock, 0x4, self.gain * 10)
+        if self.auto:
+            self.send(sock, 0x3, 0)
+
+    def resize_handler(self, signum, frame):
+        self.resize = True
+
+    def start(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            sock.connect((self.host, self.port)) 
+        except ConnectionRefusedError as e:
+            print('Connection refused.')
+            sys.exit(1)
+        self.command(sock)
+        if self.quit:
+            sock.close()
+            return
+        if self.length is None:
+            signal.signal(signal.SIGWINCH, self.resize_handler)
+        while True:
+            self.loop(sock)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--floor", type=float, default=-50,
+        help="set the waterfall floor (dBFS)")
+    parser.add_argument("--length", type=int,
+        help="FFT length (bin BW = rate / length)")
+    parser.add_argument("--repeat", type=int, default=1,
+        help="FFT computations to average")
+    parser.add_argument("--skip", type=int, default=0,
+        help="FFT computations to skip")
+    parser.add_argument("--float", action="store_true",
+        help="read 32-bit float samples")
+    parser.add_argument("--host", default="127.0.0.1",
+        help="host address of server")
+    parser.add_argument("--port", type=int, default=1234,
+        help="port address of server")
+    parser.add_argument("--freq", type=float,
+        help="set center frequency (Hz)")
+    parser.add_argument("--rate", type=float,
+        help="set sample rate (Hz)")
+    parser.add_argument("--gain", type=float,
+        help="set gain (dB)")
+    parser.add_argument("--auto", action="store_true",
+        help="turn on automatic gain")
+    parser.add_argument("--quit", action="store_true",
+        help="quit, no waterfall")
+    args = parser.parse_args()
+    Client(**vars(args)).start()
+
+
+if __name__ == "__main__":
+    main()
+
