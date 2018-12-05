@@ -4,7 +4,7 @@
 
 A radio spectrum viewer that displays a FFT waterfall as ascii art.
 It communicates with a RTLTCP server to read the radio signal over TCP.  It
-can also use issue RTLTCP commands to control the radio.  For example 
+can also issue RTLTCP commands to control the radio.  For example 
 it can change the sampling rate or frequency of the networked radio.
 The rtlwaterfall program is useful for checking the performance of 
 a remotely running rtltcp or soapytcp (see 
