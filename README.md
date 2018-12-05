@@ -2,7 +2,7 @@
 
 ![](screenshot.png)
 
-A radio spectrum viewer that displays a FFT waterfall as ASCII art.
+The following is a radio spectrum analyzer client that displays a FFT waterfall as ASCII art.
 It communicates with a RTLTCP server to listen to the radio.  It
 can also issue RTLTCP commands to control the radio.  For example 
 it can change the sampling rate or frequency of the networked radio
