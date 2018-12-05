@@ -1,5 +1,7 @@
 # rtlwaterfall
 
+![](screenshot.png)
+
 A radio spectrum viewer that displays a FFT waterfall as ascii art.
 It communicates with a RTLTCP server over TCP to read the radio signal.  It
 can also use issue RTLTCP commands to control the radio.  For example 
@@ -49,4 +51,3 @@ For example, the following works well for a 2048khz RTLTCP stream.
 $ rtlwaterfall --repeat 2000 --freq 99e6 --gain 40
 ```
 
-![Screenshot](screenshot.png)
