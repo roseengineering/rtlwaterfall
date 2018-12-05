@@ -3,7 +3,7 @@
 ![](screenshot.png)
 
 A radio spectrum viewer that displays a FFT waterfall as ASCII art.
-It communicates with a RTLTCP server to read the radio signal over TCP.  It
+It communicates with a RTLTCP server to listen to the radio signal.  It
 can also issue RTLTCP commands to control the radio.  For example 
 it can change the sampling rate or frequency of the networked radio
 using the rate and freq options.
