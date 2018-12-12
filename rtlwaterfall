@@ -38,7 +38,12 @@ class Client:
             self.N = os.get_terminal_size().columns or 80
         else:
             self.N = self.length
-        dsize = 8 if self.float else 2
+        if self.float:
+            dsize = 8
+        elif self.word:
+            dsize = 4
+        else:
+            dsize = 2
         self.fft = FFT(self.N, hann=self.hann)
         self.msglen = dsize * self.N
 
@@ -63,11 +68,16 @@ class Client:
             y = 10 * np.log10(y / self.repeat + 1e-100)
             self.waterfall(y)
 
-    def read(self, sock):
+    def read(self, sock, size):
+        if sock is None:
+            chunk = sys.stdin.buffer.read(size)
+            if len(chunk) != size: sys.exit(0)
+            return chunk
         chunks = []
         bytes_recd = 0
-        while bytes_recd < self.msglen:
-            chunk = sock.recv(min(self.msglen - bytes_recd, 2048))
+        while bytes_recd < size:
+            n = min(size - bytes_recd, 4096)
+            chunk = sock.recv(n)
             if chunk == b'':
                 raise RuntimeError("socket connection broken")
             chunks.append(chunk)
@@ -75,9 +85,12 @@ class Client:
         return b''.join(chunks)
 
     def block(self, sock):
-        buf = self.read(sock)
+        buf = self.read(sock, self.msglen)
         if self.float:
             data = np.frombuffer(buf, dtype='f')
+        elif self.word:
+            data = np.frombuffer(buf, dtype='h')
+            data = data.astype(float) / 32768
         else:
             data = np.frombuffer(buf, dtype='B')
             data = (data.astype(float) - 128) / 128
@@ -100,17 +113,22 @@ class Client:
     def resize_handler(self, signum, frame):
         self.resize = True
 
-    def start(self):
+    def connect(self):
+        if self.stdin: return
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             sock.connect((self.host, self.port)) 
         except ConnectionRefusedError as e:
-            print('Connection refused.')
+            print('Refused connection to %s:%s' % (self.host, self.port))
             sys.exit(1)
         self.command(sock)
         if self.quit:
             sock.close()
-            return
+            sys.exit(0)
+        return sock
+
+    def start(self):
+        sock = self.connect()
         if self.length is None:
             signal.signal(signal.SIGWINCH, self.resize_handler)
         while True:
@@ -129,6 +147,8 @@ def main():
         help="FFT computations to skip")
     parser.add_argument("--float", action="store_true",
         help="read 32-bit float samples")
+    parser.add_argument("--word", action="store_true",
+        help="read 16-bit integer samples")
     parser.add_argument("--hann", action="store_true",
         help="use a hann window")
     parser.add_argument("--host", default="127.0.0.1",
@@ -144,7 +164,9 @@ def main():
     parser.add_argument("--auto", action="store_true",
         help="turn on automatic gain")
     parser.add_argument("--quit", action="store_true",
-        help="quit, no waterfall")
+        help="issue commands to server, then quit")
+    parser.add_argument("--stdin", action="store_true",
+        help="read samples from standard input")
     args = parser.parse_args()
     Client(**vars(args)).start()
 
