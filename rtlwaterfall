@@ -48,8 +48,8 @@ class Client:
         self.msglen = dsize * self.N
 
     def waterfall(self, db):
-        db = db - self.floor
-        db = (db * self.colors / -self.floor).astype(int)
+        tocolors = self.colors / (self.ceiling - self.floor)
+        db = ((db - self.floor) * tocolors).astype(int)
         db = np.maximum(db, 0)
         db = np.minimum(db, self.colors - 1)
         db = np.fft.fftshift(db)
@@ -139,6 +139,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--floor", type=float, default=-50,
         help="set the waterfall floor (dBFS)")
+    parser.add_argument("--ceiling", type=float, default=0,
+        help="set the waterfall ceiling (dBFS)")
     parser.add_argument("--length", type=int,
         help="FFT length (bin BW = rate / length)")
     parser.add_argument("--repeat", type=int, default=1,

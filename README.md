@@ -28,28 +28,29 @@ than a server stream.
 
 ```
 $ rtlwaterfall -h
-usage: rtlwaterfall [-h] [--floor FLOOR] [--length LENGTH] [--repeat REPEAT]
-                    [--skip SKIP] [--float] [--word] [--hann] [--host HOST]
-                    [--port PORT] [--freq FREQ] [--rate RATE] [--gain GAIN]
-                    [--auto] [--quit] [--stdin]
+usage: rtlwaterfall [-h] [--floor FLOOR] [--ceiling CEILING] [--length LENGTH]
+                    [--repeat REPEAT] [--skip SKIP] [--float] [--word]
+                    [--hann] [--host HOST] [--port PORT] [--freq FREQ]
+                    [--rate RATE] [--gain GAIN] [--auto] [--quit] [--stdin]
 
 optional arguments:
-  -h, --help       show this help message and exit
-  --floor FLOOR    set the waterfall floor (dBFS)
-  --length LENGTH  FFT length (bin BW = rate / length)
-  --repeat REPEAT  FFT computations to average
-  --skip SKIP      FFT computations to skip
-  --float          read 32-bit float samples
-  --word           read 16-bit integer samples
-  --hann           use a hann window
-  --host HOST      host address of server
-  --port PORT      port address of server
-  --freq FREQ      set center frequency (Hz)
-  --rate RATE      set sample rate (Hz)
-  --gain GAIN      set gain (dB)
-  --auto           turn on automatic gain
-  --quit           issue commands to server, then quit
-  --stdin          read samples from standard input
+  -h, --help         show this help message and exit
+  --floor FLOOR      set the waterfall floor (dBFS)
+  --ceiling CEILING  set the waterfall ceiling (dBFS)
+  --length LENGTH    FFT length (bin BW = rate / length)
+  --repeat REPEAT    FFT computations to average
+  --skip SKIP        FFT computations to skip
+  --float            read 32-bit float samples
+  --word             read 16-bit integer samples
+  --hann             use a hann window
+  --host HOST        host address of server
+  --port PORT        port address of server
+  --freq FREQ        set center frequency (Hz)
+  --rate RATE        set sample rate (Hz)
+  --gain GAIN        set gain (dB)
+  --auto             turn on automatic gain
+  --quit             issue commands to server, then quit
+  --stdin            read samples from standard input
 ```
 
 For example, the following works well for a 2048KHz RTLTCP stream if you stand back.
