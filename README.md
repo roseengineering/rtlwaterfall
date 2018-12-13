@@ -59,3 +59,11 @@ For example, the following works well for a 2048KHz RTLTCP stream if you stand b
 $ rtlwaterfall --repeat 2000 --freq 99e6 --gain 40
 ```
 
+Or you can view files.
+
+```
+$ rtlwaterfall --repeat 10 --stdin --word --ceiling -55 --floor -80 < Winrad_20090913_202519Z_7020kHz.wav
+```
+
+
+
