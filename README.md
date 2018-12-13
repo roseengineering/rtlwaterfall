@@ -16,8 +16,8 @@ If no length is given for the FFT then rtlwaterfall will use the number of
 columns in the terminal as the FFT length - if the terminal is
 resized the length will be adjusted accordingly.
 
-The --floor option defaults to -50 dBFS as the noise floor of
-the waterfall.  0 dBFS is considered the max value.
+The --floor option defaults to -50 dB as the noise floor of
+the waterfall.  The --ceiling options defaults to 0 dB.
 
 If the --float option is set then the TCP stream will be read as
 32-bit floats instead of unsigned bytes.  Complex 32-bit IQ 
@@ -35,11 +35,11 @@ usage: rtlwaterfall [-h] [--floor FLOOR] [--ceiling CEILING] [--length LENGTH]
 
 optional arguments:
   -h, --help         show this help message and exit
-  --floor FLOOR      set the waterfall floor (dBFS)
-  --ceiling CEILING  set the waterfall ceiling (dBFS)
+  --floor FLOOR      set the waterfall floor (dB), default -50
+  --ceiling CEILING  set the waterfall ceiling (dB), default 0
   --length LENGTH    FFT length (bin BW = rate / length)
-  --repeat REPEAT    FFT computations to average
-  --skip SKIP        FFT computations to skip
+  --repeat REPEAT    FFT computations to average, default 1
+  --skip SKIP        FFT computations to skip, default 0
   --float            read 32-bit float samples
   --word             read 16-bit integer samples
   --hann             use a hann window
@@ -64,6 +64,4 @@ Or you can view files.
 ```
 $ rtlwaterfall --repeat 10 --stdin --word --ceiling -55 --floor -80 < Winrad_20090913_202519Z_7020kHz.wav
 ```
-
-
 

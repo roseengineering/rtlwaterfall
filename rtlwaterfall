@@ -138,15 +138,15 @@ class Client:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--floor", type=float, default=-50,
-        help="set the waterfall floor (dBFS)")
+        help="set the waterfall floor (dB), default -50")
     parser.add_argument("--ceiling", type=float, default=0,
-        help="set the waterfall ceiling (dBFS)")
+        help="set the waterfall ceiling (dB), default 0")
     parser.add_argument("--length", type=int,
         help="FFT length (bin BW = rate / length)")
     parser.add_argument("--repeat", type=int, default=1,
-        help="FFT computations to average")
+        help="FFT computations to average, default 1")
     parser.add_argument("--skip", type=int, default=0,
-        help="FFT computations to skip")
+        help="FFT computations to skip, default 0")
     parser.add_argument("--float", action="store_true",
         help="read 32-bit float samples")
     parser.add_argument("--word", action="store_true",
