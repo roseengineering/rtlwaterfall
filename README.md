@@ -1,6 +1,6 @@
 # rtlwaterfall
 
-![](screenshot.png)
+![](waterfall.gif)
 
 The following is a radio spectrum analyzer that displays a FFT waterfall as ASCII art.
 It communicates with a RTLTCP server to listen to the radio.  It
