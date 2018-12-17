@@ -35,7 +35,8 @@ class Client:
 
     def initialize(self):
         if self.length is None:
-            self.N = os.get_terminal_size().columns or 80
+            n = os.get_terminal_size().columns or 80
+            self.N = n if not self.meter else max(n - 2, 1)
         else:
             self.N = self.length
         if self.float:
@@ -48,25 +49,30 @@ class Client:
         self.msglen = dsize * self.N
         self.resize = False
 
-    def draw_waterfall(self, db):
+    def draw_waterfall(self, db, peak):
         tocolors = self.colors / (self.ceil - self.floor)
         db = ((db - self.floor) * tocolors).astype(int)
         db = np.maximum(db, 0)
         db = np.minimum(db, self.colors - 1)
         db = np.fft.fftshift(db)
         line = ''.join(map(lambda n: self.gray_scale[n], db))
+        if self.meter:
+            print("%-2d" % min(99, -int(peak)), end="")
         print(line)
 
     def waterfall(self, sock):
         self.initialize()
         while not self.resize:
+            peak = 0
             y = np.zeros(self.N) 
             for i in range(self.repeat):
                 for k in range(self.skip + 1):
-                    x = self.block(sock)
+                    x, p = self.block(sock)
+                    peak = max(peak, p)
                 y += self.fft.power(x - x.mean())
             y = 10 * np.log10(y / self.repeat + 1e-99)
-            self.draw_waterfall(y)
+            peak = 20 * np.log10(peak + 1e-99)
+            self.draw_waterfall(y, peak)
 
     def read(self, sock, size):
         if sock is None:
@@ -94,7 +100,8 @@ class Client:
         else:
             data = np.frombuffer(buf, dtype='B')
             data = (data.astype(float) - 128) / 128
-        return data[0::2] + 1j * data[1::2]
+        p = max(data.max(), -data.min())
+        return data[0::2] + 1j * data[1::2], p
 
     def send(self, sock, command, param):
         data = struct.pack(">BI", command, int(param))
@@ -169,6 +176,8 @@ def main():
         help="issue commands to server, then quit")
     parser.add_argument("--stdin", action="store_true",
         help="read samples from standard input")
+    parser.add_argument("--meter", action="store_true",
+        help="add peak meter to waterfall")
     args = parser.parse_args()
     Client(**vars(args)).start()
 
