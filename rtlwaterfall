@@ -66,7 +66,7 @@ class Client:
                 x = self.block(sock)
                 self.peak = max(self.peak, np.abs(x).max())
             n = 20 * np.log10(self.peak + 1e-99)
-            print("%6.1f dBFS" % n)
+            print('\33[2K%6.1f dBFS\r' % n, end='')
 
     def waterfall(self, sock):
         self.initialize()
