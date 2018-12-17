@@ -76,7 +76,7 @@ class Client:
                 for k in range(self.skip + 1):
                     x = self.block(sock)
                 y += self.fft.power(x - x.mean())
-            y = 10 * np.log10(y / self.repeat + 1e-100)
+            y = 10 * np.log10(y / self.repeat + 1e-99)
             self.draw_waterfall(y)
 
     def read(self, sock, size):
