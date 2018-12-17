@@ -57,17 +57,6 @@ class Client:
         line = ''.join(map(lambda n: self.gray_scale[n], db))
         print(line)
 
-    def peak_meter(self, sock):
-        self.length = int(self.rate or 2000000)
-        self.initialize()
-        while True:
-            self.peak = 0
-            for i in range(self.repeat):
-                x = self.block(sock)
-                self.peak = max(self.peak, np.abs(x).max())
-            n = 20 * np.log10(self.peak + 1e-99)
-            print('\33[2K%6.1f dBFS\r' % n, end='')
-
     def waterfall(self, sock):
         self.initialize()
         while not self.resize:
@@ -143,10 +132,7 @@ class Client:
         if self.length is None:
             signal.signal(signal.SIGWINCH, self.resize_handler)
         while True:
-            if self.meter:
-                self.peak_meter(sock)
-            else:
-                self.waterfall(sock)
+            self.waterfall(sock)
 
 
 def main():
@@ -181,8 +167,6 @@ def main():
         help="turn on automatic gain")
     parser.add_argument("--quit", action="store_true",
         help="issue commands to server, then quit")
-    parser.add_argument("--meter", action="store_true",
-        help="display peak meter")
     parser.add_argument("--stdin", action="store_true",
         help="read samples from standard input")
     args = parser.parse_args()
