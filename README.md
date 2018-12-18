@@ -31,8 +31,8 @@ $ rtlwaterfall -h
 usage: rtlwaterfall [-h] [--floor FLOOR] [--ceil CEIL] [--length LENGTH]
                     [--repeat REPEAT] [--skip SKIP] [--float] [--word]
                     [--hann] [--host HOST] [--port PORT] [--freq FREQ]
-                    [--rate RATE] [--gain GAIN] [--auto] [--quit] [--meter]
-                    [--stdin]
+                    [--rate RATE] [--gain GAIN] [--auto] [--quit] [--stdin]
+                    [--meter]
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -51,8 +51,8 @@ optional arguments:
   --gain GAIN      set gain (dB)
   --auto           turn on automatic gain
   --quit           issue commands to server, then quit
-  --meter          display peak meter
   --stdin          read samples from standard input
+  --meter          add peak meter to waterfall
 ```
 
 For example, the following works well for a 2048KHz RTLTCP stream if you stand back.
