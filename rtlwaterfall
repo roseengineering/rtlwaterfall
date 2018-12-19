@@ -177,7 +177,7 @@ def main():
     parser.add_argument("--stdin", action="store_true",
         help="read samples from standard input")
     parser.add_argument("--meter", action="store_true",
-        help="add peak meter to waterfall (-dBFS)")
+        help="add a peak meter to waterfall (-dBFS)")
     args = parser.parse_args()
     Client(**vars(args)).start()
 

@@ -52,7 +52,7 @@ optional arguments:
   --auto           turn on automatic gain
   --quit           issue commands to server, then quit
   --stdin          read samples from standard input
-  --meter          add peak meter to waterfall (-dBFS)
+  --meter          add a peak meter to waterfall (-dBFS)
 ```
 
 For example, the following works well for a 2048KHz RTLTCP stream if you stand back.
